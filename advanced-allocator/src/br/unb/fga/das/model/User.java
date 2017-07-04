@@ -1,5 +1,8 @@
 package br.unb.fga.das.model;
 
+import javax.persistence.MappedSuperclass;
+
+@MappedSuperclass
 public class User {
 	private String registration;
 	private String name;
