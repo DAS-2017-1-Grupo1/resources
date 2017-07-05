@@ -36,6 +36,7 @@ public class Main {
 				case 1:
 					Delegate delegate = createDelegate();
 					userDAO.create(delegate);
+					readDelegate(manager);
 				default:
 					break;
 			}
@@ -77,6 +78,19 @@ public class Main {
 		System.out.println("Delegacia:");
 		delegate.setDepartment(reader.nextLine());
 
+		return delegate;
+	}
+	
+	public static Delegate readDelegate(EntityManager manager){
+		reader = new Scanner(System.in);
+
+		Delegate delegate = new Delegate();
+
+		System.out.println("Número do id:");
+		long id = reader.nextLong();
+		
+		delegate = manager.find(Delegate.class, id);
+		
 		return delegate;
 	}
 }
