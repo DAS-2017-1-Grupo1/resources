@@ -4,8 +4,12 @@ import java.util.Scanner;
 
 import javax.persistence.EntityManager;
 
+import br.unb.fga.das.ResourceDAO;
 import br.unb.fga.das.UserDAO;
-import br.unb.fga.server.model.Professor;
+import br.unb.fga.das.handler.Allocator;
+import br.unb.fga.das.model.Allocation;
+import br.unb.fga.server.model.Delegate;
+import br.unb.fga.server.model.Gun;
 
 public class Main {
 
@@ -17,6 +21,7 @@ public class Main {
 		TransactionEvent transactionEvt = new TransactionEvent(manager);
 
 		UserDAO userDAO = new UserDAO(manager);
+		ResourceDAO resourceDAO = new ResourceDAO(manager);
 
 		while (true) {
 			reader = new Scanner(System.in);
@@ -27,15 +32,31 @@ public class Main {
 
 			int op = reader.nextInt();
 
+			// TODO: tem que fazer uma lógica aqui pra ter outro menu, para as operações
 			switch (op) {
-			case -1:
-				transactionEvt.finish();
-				return;
-			case 1:
-				Professor p = createProfessor();
-				userDAO.create(p);
-			default:
-				break;
+				case -1:
+					printCRUDOptions();
+					transactionEvt.finish();
+					return;
+				case 1:
+					Delegate delegate = createDelegate();
+					userDAO.create(delegate);
+					System.out.println(readDelegate(userDAO));
+					//delegate = updateDelegate(userDAO);
+					//userDAO.update(delegate);
+					//deleteDelegate(userDAO);
+					break;
+				case 3:
+					Gun gun = createGun();
+					resourceDAO.create(gun);
+					System.out.println(readGun(resourceDAO));
+					//gun = updateGun(resourceDAO);
+					//deleteGun(resourceDAO);
+					break;
+				case 6:
+					alloc(userDAO,resourceDAO);
+				default:
+					break;
 			}
 
 			transactionEvt.done();
@@ -43,27 +64,152 @@ public class Main {
 	}
 
 	private static void printOptions() {
-		System.out.println("Type your option:");
-		System.out.println("1 - Register a professor");
+		System.out.println("Selecione uma opção:");
+		System.out.println("1 - Delegado");
+		System.out.println("2 - Prisioneiro");
+		System.out.println("3 - Arma");
+		System.out.println("4 - Cela");
+		System.out.println("5 - Algema");
+		System.out.println("6 - Alocar Recursos");
+	}
+	
+	private static void printCRUDOptions() {
+		System.out.println("Selecione uma operação:");
+		System.out.println("1 - Cadastrar");
+		System.out.println("2 - Buscar");
+		System.out.println("3 - Editar");
+		System.out.println("4 - Remover");
+		System.out.println("5 - Listar");
 	}
 
-	public static Professor createProfessor() {
+	public static Delegate createDelegate() {
 		reader = new Scanner(System.in);
 
-		Professor p = new Professor();
+		Delegate delegate = new Delegate();
+
+		System.out.println("Número do distintivo:");
+		delegate.setRegistration(reader.nextLine());
 		
-		System.out.println("Type your name");
-		p.setName(reader.nextLine());
+		System.out.println("Nome:");
+		delegate.setName(reader.nextLine());
+		
+		System.out.println("Delegacia:");
+		delegate.setDepartment(reader.nextLine());
 
-		System.out.println("Type your registration");
-		p.setRegistration(reader.nextLine());
+		return delegate;
+	}
+	
+	public static Delegate readDelegate(UserDAO userDAO){
+		reader = new Scanner(System.in);
 
-		System.out.println("Type your email");
-		p.setEmail(reader.nextLine());
+		Delegate delegate = new Delegate();
 
-		System.out.println("Type your age");
-		p.setAge(reader.nextInt());
+		System.out.println("Número do id:");
+		long id = reader.nextLong();
+		
+		delegate = (Delegate) userDAO.read(Delegate.class,Long.valueOf(id));
+		
+		return delegate;
+	}
+	
+	public static void deleteDelegate(UserDAO userDAO){
+		reader = new Scanner(System.in);
 
-		return p;
+		Delegate delegate = readDelegate(userDAO);
+		
+		userDAO.delete(Delegate.class, delegate);
+	}
+	
+	public static Delegate updateDelegate(UserDAO userDAO){
+		reader = new Scanner(System.in);
+
+		Delegate delegate = readDelegate(userDAO);
+		
+		System.out.println("Número do distintivo(Antigo:"+delegate.getRegistration()+"):");
+		delegate.setRegistration(reader.nextLine());
+		
+		System.out.println("Nome(Antigo:"+delegate.getName()+"):");
+		delegate.setName(reader.nextLine());
+		
+		System.out.println("Delegacia(Antigo:"+delegate.getDepartment()+"):");
+		delegate.setDepartment(reader.nextLine());
+		
+		return delegate;
+	}
+	
+	public static Gun createGun(){
+		reader = new Scanner(System.in);
+		
+		Gun gun = new Gun();
+
+		System.out.println("Nome:");
+		gun.setName(reader.nextLine());
+		
+		System.out.println("Calibre:");
+		gun.setCaliber(reader.nextLine());
+		
+		System.out.println("Capacidade do carregador:");
+		gun.setMagazineCapacity(reader.nextInt());
+
+		
+		return gun;
+	}
+
+	public static Gun readGun(ResourceDAO resourceDAO){
+		reader = new Scanner(System.in);
+
+		Gun gun = new Gun();
+
+		System.out.println("Número do id:");
+		long id = reader.nextLong();
+		
+		gun = (Gun) resourceDAO.read(Gun.class,Long.valueOf(id));
+		
+		return gun;
+	}
+	
+	public static void deleteGun(ResourceDAO resourceDAO){
+		reader = new Scanner(System.in);
+		
+		Gun gun = readGun(resourceDAO);
+		
+		resourceDAO.delete(Gun.class, gun);
+	}
+	
+	public static Gun updateGun(ResourceDAO resourceDAO){
+		reader = new Scanner(System.in);
+
+		Gun gun = readGun(resourceDAO);
+		
+		System.out.println("Nome(Antigo:"+gun.getName()+"):");
+		gun.setName(reader.nextLine());
+		
+		System.out.println("Calibre(Antigo:"+gun.getCaliber()+"):");
+		gun.setCaliber(reader.nextLine());
+		
+		System.out.println("Capacidade do carregador(Antigo:"+gun.getMagazineCapacity()+"):");
+		gun.setMagazineCapacity(reader.nextInt());
+		
+		return gun;
+	}
+	
+	public static void alloc(UserDAO userDAO, ResourceDAO resourceDAO){
+		reader = new Scanner(System.in);
+		
+		Allocation allocation = new Allocation();
+		
+		System.out.println("Usário:");
+		Delegate delegate = readDelegate(userDAO);
+		
+		System.out.println("Recurso:");
+		Gun gun = readGun(resourceDAO);
+		
+		allocation.register(delegate, gun);
+		
+		System.out.println("Código do patrimônio:");
+		allocation.setPatrimonyCode(reader.nextLong());
+		
+		System.out.println("Código do patrimônio:");
+		allocation.setRegistration(reader.nextLine());
 	}
 }
