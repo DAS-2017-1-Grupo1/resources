@@ -5,7 +5,7 @@ import java.util.Scanner;
 import javax.persistence.EntityManager;
 
 import br.unb.fga.das.UserDAO;
-import br.unb.fga.server.model.Professor;
+import br.unb.fga.server.model.Delegate;
 
 public class Main {
 
@@ -27,15 +27,17 @@ public class Main {
 
 			int op = reader.nextInt();
 
+			// TODO: tem que fazer uma lógica aqui pra ter outro menu, para as operações
 			switch (op) {
-			case -1:
-				transactionEvt.finish();
-				return;
-			case 1:
-				Professor p = createProfessor();
-				userDAO.create(p);
-			default:
-				break;
+				case -1:
+					printCRUDOptions();
+					transactionEvt.finish();
+					return;
+				case 1:
+					Delegate delegate = createDelegate();
+					userDAO.create(delegate);
+				default:
+					break;
 			}
 
 			transactionEvt.done();
@@ -43,27 +45,38 @@ public class Main {
 	}
 
 	private static void printOptions() {
-		System.out.println("Type your option:");
-		System.out.println("1 - Register a professor");
+		System.out.println("Selecione uma opção:");
+		System.out.println("1 - Delegado");
+		System.out.println("2 - Prisioneiro");
+		System.out.println("3 - Arma");
+		System.out.println("4 - Cela");
+		System.out.println("5 - Algema");
+		System.out.println("6 - Alocar Recursos");
+	}
+	
+	private static void printCRUDOptions() {
+		System.out.println("Selecione uma operação:");
+		System.out.println("1 - Cadastrar");
+		System.out.println("2 - Buscar");
+		System.out.println("3 - Editar");
+		System.out.println("4 - Remover");
+		System.out.println("5 - Listar");
 	}
 
-	public static Professor createProfessor() {
+	public static Delegate createDelegate() {
 		reader = new Scanner(System.in);
 
-		Professor p = new Professor();
+		Delegate delegate = new Delegate();
+
+		System.out.println("Número do distintivo:");
+		delegate.setRegistration(reader.nextLine());
 		
-		System.out.println("Type your name");
-		p.setName(reader.nextLine());
+		System.out.println("Nome:");
+		delegate.setName(reader.nextLine());
+		
+		System.out.println("Delegacia:");
+		delegate.setDepartment(reader.nextLine());
 
-		System.out.println("Type your registration");
-		p.setRegistration(reader.nextLine());
-
-		System.out.println("Type your email");
-		p.setEmail(reader.nextLine());
-
-		System.out.println("Type your age");
-		p.setAge(reader.nextInt());
-
-		return p;
+		return delegate;
 	}
 }
