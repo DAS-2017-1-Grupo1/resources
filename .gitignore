@@ -1,6 +1,8 @@
 # Remove target folders
 /target/
 
+persistence.xml
+
 # Compiled class file
 *.class
 
