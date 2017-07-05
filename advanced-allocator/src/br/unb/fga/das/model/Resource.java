@@ -1,5 +1,8 @@
 package br.unb.fga.das.model;
 
+import javax.persistence.MappedSuperclass;
+
+@MappedSuperclass
 public class Resource {
 	private String name;
 	private String description;

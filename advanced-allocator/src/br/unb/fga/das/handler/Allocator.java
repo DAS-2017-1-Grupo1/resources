@@ -9,15 +9,12 @@ import br.unb.fga.das.model.Allocation;
 import br.unb.fga.das.model.Resource;
 import br.unb.fga.das.model.User;
 
-public abstract class Allocator {
+public class Allocator {
 	
 	public EntityManager entityManager;
 	
-	public void register(User user, Resource resource) {
-		Allocation allocation = new Allocation();
-		allocation.setRegistration(user.getRegistration());
-		allocation.setPatrimonyCode(resource.getPatrimonyCode());
-		entityManager.persist(allocation);
+	public Allocator(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -38,5 +35,9 @@ public abstract class Allocator {
 		query.setParameter("patrimonyCode", resource.getPatrimonyCode());
 
 		return query.getResultList();
+	}
+	
+	public void create(Allocation allocation) {
+		entityManager.persist(allocation);
 	}
 }
