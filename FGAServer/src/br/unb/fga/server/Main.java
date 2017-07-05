@@ -37,6 +37,10 @@ public class Main {
 					Delegate delegate = createDelegate();
 					userDAO.create(delegate);
 					readDelegate(manager);
+					delegate = updateDelegate(manager);
+					userDAO.update(delegate);
+					deleteDelegate(manager);
+
 				default:
 					break;
 			}
@@ -90,6 +94,41 @@ public class Main {
 		long id = reader.nextLong();
 		
 		delegate = manager.find(Delegate.class, id);
+		
+		return delegate;
+	}
+	
+	public static void deleteDelegate(EntityManager manager){
+		reader = new Scanner(System.in);
+
+		Delegate delegate = new Delegate();
+
+		System.out.println("Número do id:");
+		long id = reader.nextLong();
+		
+		delegate = manager.find(Delegate.class, id);
+		manager.remove(delegate);
+	}
+	
+	public static Delegate updateDelegate(EntityManager manager){
+		reader = new Scanner(System.in);
+
+		Delegate delegate = new Delegate();
+
+		
+		System.out.println("Número do id:");
+		long id = reader.nextLong();
+
+		delegate = manager.find(Delegate.class, id);
+		
+		System.out.println("Número do distintivo(Antigo:"+delegate.getRegistration()+"):");
+		delegate.setRegistration(reader.nextLine());
+		
+		System.out.println("Nome(Antigo:"+delegate.getName()+"):");
+		delegate.setName(reader.nextLine());
+		
+		System.out.println("Delegacia(Antigo:"+delegate.getDepartment()+"):");
+		delegate.setDepartment(reader.nextLine());
 		
 		return delegate;
 	}
