@@ -1,3 +1,6 @@
+# Remove target folders
+/target/
+
 # Compiled class file
 *.class
 
