@@ -28,5 +28,9 @@ public class Delegate extends User {
 
 	public void setDepartment(String department) {
 		this.department = department;
-	}	
+	}
+	
+	public String toString(){
+		return "\nID: "+Id+"\nNome:"+getName()+"\nDelegacia: "+department+"\nNúmero do distintivo:"+getRegistration();
+	}
 }

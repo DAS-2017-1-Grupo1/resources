@@ -4,8 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import br.unb.fga.das.handler.Allocator;
+
 @Entity
-public class Allocation {
+public class Allocation extends Allocator {
 	@Id
 	@GeneratedValue
 	private Long id;

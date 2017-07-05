@@ -4,10 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import br.unb.fga.das.model.Resource;
 import br.unb.fga.das.model.User;
 
 @Entity
-public class Gun extends User {
+public class Gun extends Resource{
 
 	@Id
 	@GeneratedValue
@@ -37,5 +38,9 @@ public class Gun extends User {
 
 	public void setCaliber(String caliber) {
 		this.caliber = caliber;
-	}	
+	}
+	
+	public String toString(){
+		return "\nID: "+id+"\nNome:"+getName()+"\nCapacidade do carregador: "+ magazineCapacity + "\nCalibre: "+caliber;
+	}
 }

@@ -4,8 +4,12 @@ import java.util.Scanner;
 
 import javax.persistence.EntityManager;
 
+import br.unb.fga.das.ResourceDAO;
 import br.unb.fga.das.UserDAO;
+import br.unb.fga.das.handler.Allocator;
+import br.unb.fga.das.model.Allocation;
 import br.unb.fga.server.model.Delegate;
+import br.unb.fga.server.model.Gun;
 
 public class Main {
 
@@ -17,6 +21,7 @@ public class Main {
 		TransactionEvent transactionEvt = new TransactionEvent(manager);
 
 		UserDAO userDAO = new UserDAO(manager);
+		ResourceDAO resourceDAO = new ResourceDAO(manager);
 
 		while (true) {
 			reader = new Scanner(System.in);
@@ -36,11 +41,20 @@ public class Main {
 				case 1:
 					Delegate delegate = createDelegate();
 					userDAO.create(delegate);
-					readDelegate(manager);
-					delegate = updateDelegate(manager);
-					userDAO.update(delegate);
-					deleteDelegate(manager);
-
+					System.out.println(readDelegate(userDAO));
+					//delegate = updateDelegate(userDAO);
+					//userDAO.update(delegate);
+					//deleteDelegate(userDAO);
+					break;
+				case 3:
+					Gun gun = createGun();
+					resourceDAO.create(gun);
+					System.out.println(readGun(resourceDAO));
+					//gun = updateGun(resourceDAO);
+					//deleteGun(resourceDAO);
+					break;
+				case 6:
+					alloc(userDAO,resourceDAO);
 				default:
 					break;
 			}
@@ -85,7 +99,7 @@ public class Main {
 		return delegate;
 	}
 	
-	public static Delegate readDelegate(EntityManager manager){
+	public static Delegate readDelegate(UserDAO userDAO){
 		reader = new Scanner(System.in);
 
 		Delegate delegate = new Delegate();
@@ -93,33 +107,23 @@ public class Main {
 		System.out.println("Número do id:");
 		long id = reader.nextLong();
 		
-		delegate = manager.find(Delegate.class, id);
+		delegate = (Delegate) userDAO.read(Delegate.class,Long.valueOf(id));
 		
 		return delegate;
 	}
 	
-	public static void deleteDelegate(EntityManager manager){
+	public static void deleteDelegate(UserDAO userDAO){
 		reader = new Scanner(System.in);
 
-		Delegate delegate = new Delegate();
-
-		System.out.println("Número do id:");
-		long id = reader.nextLong();
+		Delegate delegate = readDelegate(userDAO);
 		
-		delegate = manager.find(Delegate.class, id);
-		manager.remove(delegate);
+		userDAO.delete(Delegate.class, delegate);
 	}
 	
-	public static Delegate updateDelegate(EntityManager manager){
+	public static Delegate updateDelegate(UserDAO userDAO){
 		reader = new Scanner(System.in);
 
-		Delegate delegate = new Delegate();
-
-		
-		System.out.println("Número do id:");
-		long id = reader.nextLong();
-
-		delegate = manager.find(Delegate.class, id);
+		Delegate delegate = readDelegate(userDAO);
 		
 		System.out.println("Número do distintivo(Antigo:"+delegate.getRegistration()+"):");
 		delegate.setRegistration(reader.nextLine());
@@ -131,5 +135,81 @@ public class Main {
 		delegate.setDepartment(reader.nextLine());
 		
 		return delegate;
+	}
+	
+	public static Gun createGun(){
+		reader = new Scanner(System.in);
+		
+		Gun gun = new Gun();
+
+		System.out.println("Nome:");
+		gun.setName(reader.nextLine());
+		
+		System.out.println("Calibre:");
+		gun.setCaliber(reader.nextLine());
+		
+		System.out.println("Capacidade do carregador:");
+		gun.setMagazineCapacity(reader.nextInt());
+
+		
+		return gun;
+	}
+
+	public static Gun readGun(ResourceDAO resourceDAO){
+		reader = new Scanner(System.in);
+
+		Gun gun = new Gun();
+
+		System.out.println("Número do id:");
+		long id = reader.nextLong();
+		
+		gun = (Gun) resourceDAO.read(Gun.class,Long.valueOf(id));
+		
+		return gun;
+	}
+	
+	public static void deleteGun(ResourceDAO resourceDAO){
+		reader = new Scanner(System.in);
+		
+		Gun gun = readGun(resourceDAO);
+		
+		resourceDAO.delete(Gun.class, gun);
+	}
+	
+	public static Gun updateGun(ResourceDAO resourceDAO){
+		reader = new Scanner(System.in);
+
+		Gun gun = readGun(resourceDAO);
+		
+		System.out.println("Nome(Antigo:"+gun.getName()+"):");
+		gun.setName(reader.nextLine());
+		
+		System.out.println("Calibre(Antigo:"+gun.getCaliber()+"):");
+		gun.setCaliber(reader.nextLine());
+		
+		System.out.println("Capacidade do carregador(Antigo:"+gun.getMagazineCapacity()+"):");
+		gun.setMagazineCapacity(reader.nextInt());
+		
+		return gun;
+	}
+	
+	public static void alloc(UserDAO userDAO, ResourceDAO resourceDAO){
+		reader = new Scanner(System.in);
+		
+		Allocation allocation = new Allocation();
+		
+		System.out.println("Usário:");
+		Delegate delegate = readDelegate(userDAO);
+		
+		System.out.println("Recurso:");
+		Gun gun = readGun(resourceDAO);
+		
+		allocation.register(delegate, gun);
+		
+		System.out.println("Código do patrimônio:");
+		allocation.setPatrimonyCode(reader.nextLong());
+		
+		System.out.println("Código do patrimônio:");
+		allocation.setRegistration(reader.nextLine());
 	}
 }
